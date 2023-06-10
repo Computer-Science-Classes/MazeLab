@@ -23,35 +23,35 @@ public class MazeCheckpoint2b {
                 "public Cell Maze.getCell(int,int)",
                 "public void Maze.initialize()");
     }
-    
+
     @Test
     @Order(order = 222)
     public void testMaze_initialize() {
         MazeCanvas mc = new MazeCanvas(6, 9, 32);
         mc.open();
-        Maze m = Maze.newInstance(mc);
+        Maze m = new Maze(mc);
         m.initialize();
         for (int r = 0; r < mc.getRows(); r++) {
             for (int c = 0; c < mc.getCols(); c++) {
-                if (r == 0 || c == 0 || r == mc.getRows()-1 || c == mc.getCols()-1) {
+                if (r == 0 || c == 0 || r == mc.getRows() - 1 || c == mc.getCols() - 1) {
                     mc.assertShade(r, c, null);
                 }
             }
         }
         mc.close();
     }
-    
+
     @Test
     @Order(order = 223)
     public void testMaze_getCell() {
         MazeCanvas mc = new MazeCanvas(6, 9, 32);
         mc.open();
-        Maze m = Maze.newInstance(mc);
+        Maze m = new Maze(mc);
         m.initialize();
         for (int r = 0; r < mc.getRows(); r++) {
             for (int c = 0; c < mc.getCols(); c++) {
                 Cell cell = m.getCell(r, c);
-                if (r == 0 || c == 0 || r == mc.getRows()-1 || c == mc.getCols()-1) {
+                if (r == 0 || c == 0 || r == mc.getRows() - 1 || c == mc.getCols() - 1) {
                     cell.assertType(EdgeCell.class, EntryCell.class, ExitCell.class);
                 } else {
                     cell.assertType(Cell.class, BlockCell.class);

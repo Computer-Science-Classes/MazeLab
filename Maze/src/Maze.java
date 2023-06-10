@@ -3,16 +3,47 @@ import java.awt.*;
 import graphics.MazeCanvas;
 import graphics.MazeCanvas.Side;
 
+/**
+ * Maze represents the main structure of the maze with Cells
+ */
 public class Maze {
 
     public static final Color RED = Color.RED;
     public static final Color DARK_RED = new Color(150, 0, 0);
-    private MazeCanvas canvas;
 
+    private MazeCanvas canvas;
+    private Cell[][] gridOfCells;
+
+    /**
+     * Constructor for Maze class
+     * 
+     * @param canvas - the canvas to draw the maze
+     */
     public Maze(MazeCanvas canvas) {
         this.canvas = canvas;
+        this.gridOfCells = new Cell[canvas.getRows()][canvas.getCols()];
+        initialize();
     }
 
+    /**
+     * Initializes the maze with Cells and EdgeCells
+     */
+    public void initialize() {
+        for (int i = 0; i < canvas.getRows(); i++) {
+            for (int j = 0; j < canvas.getCols(); j++) {
+                if (isOnEdge(i, j)) {
+                    gridOfCells[i][j] = new EdgeCell(canvas, i, j, RED);
+                    ((EdgeCell) gridOfCells[i][j]).draw();
+                } else {
+                    gridOfCells[i][j] = new Cell(canvas, i, j);
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to generate the snake pattern for testing the canvas
+     */
     public void genSnake() {
         for (int row = 0; row < canvas.getRows(); row++) {
             for (int col = 0; col < canvas.getCols(); col++) {
@@ -51,5 +82,20 @@ public class Maze {
 
             }
         }
+    }
+
+    public Cell getCell(int row, int col) {
+        return this.gridOfCells[row][col];
+    }
+
+    /**
+     * Check if a cell is on the edge of the grid
+     * 
+     * @param row
+     * @param col
+     * @return
+     */
+    private boolean isOnEdge(int row, int col) {
+        return row == 0 || row == canvas.getRows() - 1 || col == 0 || col == canvas.getCols() - 1;
     }
 }
