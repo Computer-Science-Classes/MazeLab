@@ -15,6 +15,8 @@ public class Cell {
     protected MazeCanvas canvas;
     protected List<Side> walls;
 
+    protected boolean visited = false;
+
     /**
      * Constructor for Cell class
      * 
@@ -30,7 +32,7 @@ public class Cell {
         canvas.drawCell(row, col);
 
         this.walls = new ArrayList<Side>(
-                Arrays.asList(Side.Top, Side.Right, Side.Bottom, Side.Left));
+                Arrays.asList(Side.Top, Side.Bottom, Side.Left, Side.Right));
     }
 
     public int getRow() {
@@ -46,7 +48,15 @@ public class Cell {
     }
 
     public void removeWall(Side side) {
-        this.walls.remove(side);
-        canvas.eraseWall(row, col, side);
+        this.walls.remove(side); // internal board
+        canvas.eraseWall(row, col, side); // gui board
+    }
+
+    public boolean getVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
     }
 }

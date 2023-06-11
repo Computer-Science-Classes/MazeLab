@@ -10,8 +10,9 @@ public class Program {
         Maze maze = new Maze(canvas);
 
         canvas.open();
-        // maze.genSnake();
         maze.initialize();
+        // maze.genSnake();
+        maze.generateMaze();
 
         canvas.pause();
         canvas.close();

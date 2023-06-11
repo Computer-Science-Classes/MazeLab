@@ -48,6 +48,10 @@ public class Maze {
         placeEntryAndExit();
     }
 
+    /**
+     * Places a certain number of BlockCells randomly ensuring tbere is no adjacents
+     * The number of BlockCells placed is 5% of the amount of cells
+     */
     private void placeBlockCells() {
         int totalInterorCells = (canvas.getRows() - 2) * (canvas.getCols() - 2);
         int count = (int) (0.05 * totalInterorCells);
@@ -98,8 +102,17 @@ public class Maze {
 
         do {
             // Calculate random positions for EntryCell and ExitCell based on their edges
-            entryPos = random.nextInt(canvas.getCols() - 2);
-            exitPos = random.nextInt(canvas.getCols() - 2);
+            if (entryEdge % 2 == 0) { // top or bottom edge
+                entryPos = random.nextInt(canvas.getCols() - 2) + 1;
+            } else { // right or left edge
+                entryPos = random.nextInt(canvas.getRows() - 2) + 1;
+            }
+
+            if (exitEdge % 2 == 0) { // top or bottom edge
+                exitPos = random.nextInt(canvas.getCols() - 2) + 1;
+            } else { // right or left edge
+                exitPos = random.nextInt(canvas.getRows() - 2) + 1;
+            }
 
             entryCoords = getCoordinates(entryPos, entryEdge);
             exitCoords = getCoordinates(exitPos, exitEdge);
@@ -108,6 +121,18 @@ public class Maze {
         gridOfCells[entryCoords[0]][entryCoords[1]] = new EntryCell(canvas, entryCoords[0], entryCoords[1],
                 Color.GREEN);
         gridOfCells[exitCoords[0]][exitCoords[1]] = new ExitCell(canvas, exitCoords[0], exitCoords[1], Color.BLUE);
+    }
+
+    /**
+     * Calls the Generator class to generate the maze using DFS
+     */
+    public void generateMaze() {
+        Generator generator = new Generator(this);
+
+        Cell entryCell = findEntryCell();
+        if (entryCell != null) {
+            generator.generateMaze(entryCell.getRow(), entryCell.getCol());
+        }
     }
 
     /**
@@ -171,10 +196,14 @@ public class Maze {
 
     private List<int[]> getAdjacentLocations(int row, int col) {
         List<int[]> adjacentLocations = new ArrayList<>();
-        adjacentLocations.add(new int[] { row - 1, col });
-        adjacentLocations.add(new int[] { row + 1, col });
-        adjacentLocations.add(new int[] { row, col - 1 });
-        adjacentLocations.add(new int[] { row, col + 1 });
+        adjacentLocations.add(new int[] { row - 1, col }); // Above
+        adjacentLocations.add(new int[] { row + 1, col }); // Below
+        adjacentLocations.add(new int[] { row, col - 1 }); // Left
+        adjacentLocations.add(new int[] { row, col + 1 }); // Right
+        adjacentLocations.add(new int[] { row - 1, col - 1 }); // Top-left diagonal
+        adjacentLocations.add(new int[] { row - 1, col + 1 }); // Top-right diagonal
+        adjacentLocations.add(new int[] { row + 1, col - 1 }); // Bottom-left diagonal
+        adjacentLocations.add(new int[] { row + 1, col + 1 }); // Bottom-right diagonal
         return adjacentLocations;
     }
 
@@ -228,5 +257,25 @@ public class Maze {
             }
         }
         return false;
+    }
+
+    /**
+     * Loops through maze to find the entry cell
+     * 
+     * @return the position of the entry cell
+     */
+    private Cell findEntryCell() {
+        for (int row = 0; row < canvas.getRows(); row++) {
+            for (int col = 0; col < canvas.getCols(); col++) {
+                if (gridOfCells[row][col] instanceof EntryCell) {
+                    return gridOfCells[row][col];
+                }
+            }
+        }
+        return null;
+    }
+
+    public MazeCanvas getCanvas() {
+        return this.canvas;
     }
 }
