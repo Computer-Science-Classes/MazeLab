@@ -17,6 +17,11 @@ public class Cell {
 
     protected boolean visited = false;
 
+    // Fields for A*
+    private double gCost;
+    private double hCost;
+    private Cell parent;
+
     /**
      * Constructor for Cell class
      * 
@@ -33,6 +38,11 @@ public class Cell {
 
         this.walls = new ArrayList<Side>(
                 Arrays.asList(Side.Top, Side.Bottom, Side.Left, Side.Right));
+
+        // Initialize A* fields
+        this.gCost = Double.MAX_VALUE;
+        this.hCost = 0;
+        this.parent = null;
     }
 
     public int getRow() {
@@ -44,11 +54,13 @@ public class Cell {
     }
 
     public List<Side> getWalls() {
+        // System.out.println(this.walls);
         return new ArrayList<Side>(this.walls);
     }
 
     public void removeWall(Side side) {
         this.walls.remove(side); // internal board
+        // System.out.println(side);
         canvas.eraseWall(row, col, side); // gui board
     }
 
@@ -58,5 +70,34 @@ public class Cell {
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    public double getGCost() {
+        return gCost;
+    }
+
+    public void setGCost(double gCost) {
+        this.gCost = gCost;
+    }
+
+    public double getHCost() {
+        return hCost;
+    }
+
+    public void setHCost(double hCost) {
+        this.hCost = hCost;
+    }
+
+    public Cell getParent() {
+        return parent;
+    }
+
+    public void setParent(Cell parent) {
+        this.parent = parent;
+    }
+
+    // Calculate F cost: G cost + H cost
+    public double fCost() {
+        return getGCost() + getHCost();
     }
 }

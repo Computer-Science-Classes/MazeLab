@@ -10,9 +10,16 @@ public class Program {
         Maze maze = new Maze(canvas);
 
         canvas.open();
+
+        System.out.println("Initializers' maze");
         maze.initialize();
-        // maze.genSnake();
+        maze.printMaze();
+
         maze.generateMaze();
+
+        System.out.println("A*s' Maze");
+        maze.solveMaze();
+        maze.printMaze();
 
         canvas.pause();
         canvas.close();

@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.List;
 
@@ -27,7 +28,14 @@ public class Maze {
     public Maze(MazeCanvas canvas) {
         this.canvas = canvas;
         this.gridOfCells = new Cell[canvas.getRows()][canvas.getCols()];
-        initialize();
+    }
+
+    public Cell getCell(int row, int col) {
+        return this.gridOfCells[row][col];
+    }
+
+    public MazeCanvas getCanvas() {
+        return this.canvas;
     }
 
     /**
@@ -121,17 +129,34 @@ public class Maze {
         gridOfCells[entryCoords[0]][entryCoords[1]] = new EntryCell(canvas, entryCoords[0], entryCoords[1],
                 Color.GREEN);
         gridOfCells[exitCoords[0]][exitCoords[1]] = new ExitCell(canvas, exitCoords[0], exitCoords[1], Color.BLUE);
+
+        System.out.println("Entry Pos: " + Arrays.toString(entryCoords) + " Exit pos: " + Arrays.toString(exitCoords));
+
+        ((EntryCell) gridOfCells[entryCoords[0]][entryCoords[1]]).draw();
+        ((ExitCell) gridOfCells[exitCoords[0]][exitCoords[1]]).draw();
+
     }
 
     /**
      * Calls the Generator class to generate the maze using DFS
      */
     public void generateMaze() {
-        Generator generator = new Generator(this);
+        Generator generator = new Generator(canvas, this);
 
         Cell entryCell = findEntryCell();
         if (entryCell != null) {
             generator.generateMaze(entryCell.getRow(), entryCell.getCol());
+        }
+    }
+
+    public void solveMaze() {
+        AStar aStar = new AStar(this);
+
+        List<Cell> path = aStar.findPath();
+        if (path.isEmpty()) {
+            System.out.println("No path found from start to goal.");
+        } else {
+            System.out.println("Path found from start to goal.");
         }
     }
 
@@ -177,10 +202,6 @@ public class Maze {
 
             }
         }
-    }
-
-    public Cell getCell(int row, int col) {
-        return this.gridOfCells[row][col];
     }
 
     /**
@@ -268,6 +289,7 @@ public class Maze {
         for (int row = 0; row < canvas.getRows(); row++) {
             for (int col = 0; col < canvas.getCols(); col++) {
                 if (gridOfCells[row][col] instanceof EntryCell) {
+                    System.out.println(row + " " + col);
                     return gridOfCells[row][col];
                 }
             }
@@ -275,7 +297,60 @@ public class Maze {
         return null;
     }
 
-    public MazeCanvas getCanvas() {
-        return this.canvas;
+    private Cell findExitCell() {
+        for (int row = 0; row < canvas.getRows(); row++) {
+            for (int col = 0; col < canvas.getCols(); col++) {
+                if (gridOfCells[row][col] instanceof ExitCell) {
+                    System.out.println(row + " " + col);
+                    return gridOfCells[row][col];
+                }
+            }
+        }
+        return null;
+    }
+
+    public Cell getStart() {
+        return findEntryCell();
+    }
+
+    public Cell getGoal() {
+        return findExitCell();
+    }
+
+    public void printMaze() {
+        for (int row = 0; row < canvas.getRows(); row++) {
+            for (int col = 0; col < canvas.getCols(); col++) {
+                if (gridOfCells[row][col] instanceof EdgeCell) {
+                    System.out.print("#");
+                } else if (gridOfCells[row][col] instanceof EntryCell) {
+                    System.out.print("S");
+                } else if (gridOfCells[row][col] instanceof ExitCell) {
+                    System.out.print("E");
+                } else if (gridOfCells[row][col] instanceof BlockCell) {
+                    System.out.print("X");
+                } else {
+                    Cell cell = gridOfCells[row][col];
+                    List<Side> walls = cell.getWalls();
+                    switch (walls.size()) {
+                        case 0:
+                            System.out.print(" ");
+                            break;
+                        case 1:
+                            System.out.print("1"); // One wall
+                            break;
+                        case 2:
+                            System.out.print("2"); // Two walls
+                            break;
+                        case 3:
+                            System.out.print("3"); // Three walls
+                            break;
+                        case 4:
+                            System.out.print("4"); // Four walls (blocked)
+                            break;
+                    }
+                }
+            }
+            System.out.println();
+        }
     }
 }

@@ -14,7 +14,7 @@ public class Generator {
     private MazeCanvas canvas;
     private Random random = new Random();
 
-    public Generator(Maze maze) {
+    public Generator(MazeCanvas canvas, Maze maze) {
         this.maze = maze;
         this.canvas = maze.getCanvas();
         this.random = new Random();
@@ -34,6 +34,7 @@ public class Generator {
 
         while (!stack.isEmpty()) {
             Cell currentCell = stack.peek();
+            // System.out.println(currentCell);
             List<MazeCanvas.Side> directions = getShuffledDirections();
             boolean moved = false;
 
@@ -43,21 +44,26 @@ public class Generator {
 
                 if (newRow >= 0 && newRow < canvas.getRows()
                         && newCol >= 0 && newCol < canvas.getCols() && !maze.getCell(newRow, newCol).getVisited()) {
+                    Cell nextCell = maze.getCell(newRow, newCol);
+                    if (nextCell instanceof EntryCell || nextCell instanceof ExitCell) {
+                        continue; // Skip if the cell is an EntryCell or ExitCell
+                    }
                     if (currentCell.getWalls().contains(side)) {
-                        canvas.eraseWall(currentCell.getRow(), currentCell.getCol(), side);
-                        canvas.step(); // makes it a step by step process per DFS round
-                        currentCell.getWalls().remove(side);
+                        currentCell.removeWall(side);
 
-                        Cell nextCell = maze.getCell(newRow, newCol);
+                        canvas.step(); // makes it a stepable per DFS round
+
                         MazeCanvas.Side oppositeSide = getOpposite(side);
                         if (nextCell.getWalls().contains(oppositeSide)) {
-                            canvas.eraseWall(newRow, newCol, oppositeSide);
-                            nextCell.getWalls().remove(oppositeSide);
+                            nextCell.removeWall(oppositeSide);
                         }
+
                         nextCell.setVisited(true);
                         stack.push(nextCell);
                         moved = true;
+                        // maze.printMaze();
                         break;
+
                     }
                 }
             }
