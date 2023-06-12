@@ -7,6 +7,9 @@ import java.util.PriorityQueue;
 import graphics.MazeCanvas;
 import graphics.MazeCanvas.Side;
 
+/**
+ * Uses A* alg to solve for maze
+ */
 public class AStar {
     // Initialize the open and closed sets
     private Maze maze;
@@ -26,6 +29,10 @@ public class AStar {
         initializeCells(maze);
     }
 
+    /**
+     * Sets up internal grid representation
+     * 
+     */
     private void initializeCells(Maze maze) {
         for (int row = 0; row < maze.getCanvas().getRows(); row++) {
             for (int col = 0; col < maze.getCanvas().getCols(); col++) {
@@ -37,11 +44,21 @@ public class AStar {
         System.out.println("Start:" + start + "Goal:" + goal);
     }
 
-    // Use Manhattan distance as heuristic
+    /**
+     * Uses Manhattan distance as hueristic
+     * 
+     * @param cell
+     * @return the distance as double
+     */
     private double heuristic(Cell cell) {
         return Math.abs(cell.getRow() - goal.getRow()) + Math.abs(cell.getCol() - goal.getCol());
     }
 
+    /**
+     * Uses opening and closed sets to solve for the path to goal
+     * 
+     * @return
+     */
     public List<Cell> findPath() {
         openSet.add(start);
         maze.getCanvas().step(500);
@@ -76,6 +93,12 @@ public class AStar {
         return new ArrayList<>();
     }
 
+    /**
+     * Gets the neighboring cells for the current cell
+     * 
+     * @param cell - current cell
+     * @return the neighboring cells in a list
+     */
     private List<Cell> getNeighbors(Cell cell) {
         List<Cell> neighbors = new ArrayList<>();
         // Directions: top, down, left, right
@@ -98,6 +121,11 @@ public class AStar {
         return neighbors;
     }
 
+    /**
+     * A* to reconstruct the path for every given call
+     * 
+     * @return the path back to findPath
+     */
     private List<Cell> reconstructPath() {
         List<Cell> path = new ArrayList<>();
         Cell current = goal;
@@ -116,6 +144,9 @@ public class AStar {
         return path;
     }
 
+    /**
+     * Get the direction from the current cell
+     */
     private Side directionFromParent(Cell current) {
         Cell parent = current.getParent();
         if (parent.getRow() < current.getRow()) {
