@@ -30,6 +30,9 @@ The `Maze` class represents the main structure of the maze and manages the grid 
 
 ![Graph](./resources/graph.png)
 
+![image](https://github.com/Computer-Science-Classes/MazeLab/assets/119834691/03d403e9-e4e5-424d-9350-b616461f9233)
+
+
 ### Cell
 
 The `Cell` class represents a single cell within the maze. It holds information about its position, walls, and other properties. The `Cell` class is the base class for different types of cells within the maze.
