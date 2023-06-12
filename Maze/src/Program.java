@@ -1,6 +1,6 @@
 import graphics.MazeCanvas;
 
-public class Main {
+public class Program {
     public static int ROWS = 25;
     public static int COLS = 40;
     public static int SIZE = 20;
@@ -10,7 +10,16 @@ public class Main {
         Maze maze = new Maze(canvas);
 
         canvas.open();
-        maze.genSnake();
+
+        System.out.println("Initializers' maze");
+        maze.initialize();
+        maze.printMaze();
+
+        maze.generateMaze();
+
+        System.out.println("A*s' Maze");
+        maze.solveMaze();
+        maze.printMaze();
 
         canvas.pause();
         canvas.close();
